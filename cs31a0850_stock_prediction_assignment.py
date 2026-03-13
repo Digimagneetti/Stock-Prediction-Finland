@@ -266,13 +266,7 @@ df_adv['target_log_return'] = df_adv.groupby('Company')['log_return'].shift(-1)
 df_adv['market_avg_log_return'] = df_adv.groupby('Date_parsed')['log_return'].transform('mean')
 df_adv['market_avg_lag1'] = df_adv.groupby('Company')['market_avg_log_return'].shift(1)
 
-# 3. RSI-indikaattorin laskenta
-def calculate_rsi(series, periods=4):
-    delta = series.diff()
-    gain = (delta.where(delta > 0, 0)).rolling(window=periods).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(window=periods).mean()
-    rs = gain / loss
-    return 100 - (100 / (1 + rs))
+from indicators import calculate_rsi
 
 df_adv['RSI_4'] = df_adv.groupby('Company')['Close'].transform(lambda x: calculate_rsi(x, periods=4))
 
@@ -363,14 +357,7 @@ df_adv2['log_return'] = np.log1p(df_adv2['%Chg'])
 df_adv2['market_avg_log_return'] = df_adv2.groupby('Date_parsed')['log_return'].transform('mean')
 df_adv2['market_avg_lag1'] = df_adv2.groupby('Company')['market_avg_log_return'].shift(1)
 
-# RSI-indikaattori
-def calculate_rsi(series, periods=4):
-    delta = series.diff()
-    gain = (delta.where(delta > 0, 0)).rolling(window=periods).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(window=periods).mean()
-    # Nollalla jakamisen esto
-    rs = np.where(loss == 0, 0, gain / loss)
-    return 100 - (100 / (1 + rs))
+from indicators import calculate_rsi
 
 df_adv2['RSI_4'] = df_adv2.groupby('Company')['Close'].transform(lambda x: calculate_rsi(x, periods=4))
 
@@ -504,13 +491,7 @@ df['target_actual_chg'] = df.groupby('Company')['%Chg'].shift(-1)
 df['market_avg_log_return'] = df.groupby('Date_parsed')['log_return'].transform('mean')
 df['market_avg_lag1'] = df.groupby('Company')['market_avg_log_return'].shift(1)
 
-# RSI-indikaattori
-def calculate_rsi(series, periods=4):
-    delta = series.diff()
-    gain = (delta.where(delta > 0, 0)).rolling(window=periods).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(window=periods).mean()
-    rs = np.where(loss == 0, 0, gain / loss)
-    return 100 - (100 / (1 + rs))
+from indicators import calculate_rsi
 
 df['RSI_4'] = df.groupby('Company')['Close'].transform(lambda x: calculate_rsi(x, periods=4))
 
